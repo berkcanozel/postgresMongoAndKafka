@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -26,6 +26,15 @@ spring:
   data:
     mongodb:
       uri: mongodb://user:password@mongo:27017/testdb
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: '*'
+    endpoint:
+      prometheus:
+        enabled: true
 
 server:
   port: 8080
