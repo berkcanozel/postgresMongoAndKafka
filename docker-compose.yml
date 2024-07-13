@@ -54,15 +54,6 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
 
-  loki:
-    image: grafana/loki:2.4.1
-    ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-    volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml
-      - loki_data:/tmp/loki
-
   promtail:
     image: grafana/promtail:2.4.1
     volumes:
@@ -80,7 +71,6 @@ services:
       - mongo
       - prometheus
       - grafana
-      - loki
       - promtail
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
