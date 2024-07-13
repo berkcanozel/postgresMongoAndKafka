@@ -86,3 +86,8 @@ services:
 networks:
   default:
     driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
+  loki_data:
