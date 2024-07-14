@@ -36,7 +36,7 @@ services:
       - graylog-network
 
   mongo:
-    build: .
+    image: mongo:latest
     ports:
       - "27017:27017"
     environment:
@@ -91,7 +91,7 @@ services:
       - GRAYLOG_ROOT_PASSWORD_SHA2=5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
       - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
       - GRAYLOG_ELASTICSEARCH_VERSION=7
-      - GRAYLOG_MONGODB_URI=mongodb://root:password@mongo:27017/graylog
+      - GRAYLOG_MONGODB_URI=mongodb://graylog:graylog_password@mongo:27017/graylog
     depends_on:
       - mongo
       - elasticsearch
@@ -120,7 +120,7 @@ services:
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_DATA_MONGODB_URI: mongodb://root:password@mongo:27017/testdb
+      SPRING_DATA_MONGODB_URI: mongodb://graylog:graylog_password@mongo:27017/testdb
     networks:
       - graylog-network
 
