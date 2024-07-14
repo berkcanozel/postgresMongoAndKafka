@@ -1,6 +1,6 @@
 <configuration>
     <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
-        <graylogHost>127.0.0.1</graylogHost>
+        <graylogHost>graylog</graylogHost>
         <port>12201</port>
         <includeFullMdc>true</includeFullMdc>
         <facility>java-app</facility>

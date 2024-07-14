@@ -10,7 +10,7 @@ RUN mvn -f /home/app/pom.xml clean package -DskipTests
 # https://hub.docker.com/_/openjdk
 FROM openjdk:11-jre-slim
 COPY --from=build /home/app/target/kafka-example-0.0.1-SNAPSHOT.jar /usr/local/lib/kafka-example.jar
-EXPOSE 8080
+EXPOSE 8101
 ENTRYPOINT ["java","-jar","/usr/local/lib/kafka-example.jar"]
 
 # Dockerfile
