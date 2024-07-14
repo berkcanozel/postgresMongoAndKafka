@@ -36,7 +36,7 @@ services:
       - graylog-network
 
   mongo:
-    image: mongo:latest
+    build: .
     ports:
       - "27017:27017"
     environment:

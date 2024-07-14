@@ -12,3 +12,8 @@ FROM openjdk:11-jre-slim
 COPY --from=build /home/app/target/kafka-example-0.0.1-SNAPSHOT.jar /usr/local/lib/kafka-example.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/usr/local/lib/kafka-example.jar"]
+
+# Dockerfile
+FROM mongo:latest
+
+COPY mongo-init.js /docker-entrypoint-initdb.d/
