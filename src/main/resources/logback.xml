@@ -1,0 +1,14 @@
+<configuration>
+    <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
+        <graylogHost>127.0.0.1</graylogHost>
+        <port>12201</port>
+        <includeFullMdc>true</includeFullMdc>
+        <facility>java-app</facility>
+        <additionalField>environment=dev</additionalField>
+        <additionalField>application=kafka-example</additionalField>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="GELF" />
+    </root>
+</configuration>
