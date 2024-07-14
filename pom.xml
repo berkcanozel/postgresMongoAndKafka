@@ -100,12 +100,7 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
-        <!-- Graylog Bağımlılık -->
-        <dependency>
-            <groupId>de.siegmar</groupId>
-            <artifactId>logback-gelf</artifactId>
-            <version>3.0.0</version>
-        </dependency>
+
     </dependencies>
     <build>
         <plugins>
