@@ -34,10 +34,16 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo_data:/data/db
+    command: >
+      bash -c "
+      /usr/bin/mongod --bind_ip_all --fork --logpath /var/log/mongodb.log;
+      sleep 10;
+      /usr/bin/mongo --eval 'db.createUser({user: \"user\", pwd: \"password\", roles: [{role: \"readWrite\", db: \"graylog\"}]});'
+      "
 
   prometheus:
     image: prom/prometheus:latest
