@@ -4,10 +4,7 @@
         <port>12201</port>
         <includeFullMdc>true</includeFullMdc>
         <facility>java-app</facility>
-        <additionalFields>
-            <additionalField>environment=dev</additionalField>
-            <additionalField>application=kafka-example</additionalField>
-        </additionalFields>
+        <additionalFields>environment=dev,application=kafka-example</additionalFields>
     </appender>
 
     <root level="INFO">

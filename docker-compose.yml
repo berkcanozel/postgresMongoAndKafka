@@ -114,13 +114,14 @@ services:
       - prometheus
       - grafana
       - promtail
+      - graylog
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testdb
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_DATA_MONGODB_URI: mongodb://graylog:graylog_password@mongo:27017/testdb
+      SPRING_DATA_MONGODB_URI: mongodb://root:password@mongo:27017/testdb
     networks:
       - graylog-network
 
