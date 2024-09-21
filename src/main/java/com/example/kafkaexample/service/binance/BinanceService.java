@@ -24,5 +24,18 @@ public class BinanceService {
                 .bodyToMono(String.class)
                 .block();
     }
+
+    public String getKlineData(String symbol, String interval, int limit) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v3/klines")
+                        .queryParam("symbol", symbol)
+                        .queryParam("interval", interval)
+                        .queryParam("limit", limit)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 }
 

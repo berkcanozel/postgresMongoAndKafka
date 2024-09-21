@@ -16,7 +16,7 @@ public class KlineDataController {
 
     @GetMapping("/fetch")
     public String fetchKlineData(@RequestParam String symbol, @RequestParam String interval) {
-        binanceKlineDataService.fetchAndSaveKlineData(symbol, interval);
+        binanceKlineDataService.saveKlineData(binanceKlineDataService.fetchAndSaveKlineData(symbol, interval,false));
         return "Veri alındı ve kaydedildi.";
     }
 

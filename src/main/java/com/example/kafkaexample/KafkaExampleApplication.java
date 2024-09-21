@@ -8,10 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.example.kafkaexample.data.postgres.repository")
 @EnableMongoRepositories(basePackages = "com.example.kafkaexample.data.mongo.repository")
+@EnableScheduling
 public class KafkaExampleApplication {
 
     public static void main(String[] args) {

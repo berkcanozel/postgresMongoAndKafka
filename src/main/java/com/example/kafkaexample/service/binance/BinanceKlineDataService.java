@@ -4,6 +4,8 @@ import com.example.kafkaexample.data.mongo.repository.BinanceKlineDataRepository
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,9 +17,17 @@ public class BinanceKlineDataService {
 
     private final BinanceKlineDataRepository binanceKlineDataRepository;
 
-    public void fetchAndSaveKlineData(String symbol, String interval) {
-        String response = binanceService.getKlineData(symbol, interval);
+    public List<KlineData> fetchAndSaveKlineData(String symbol, String interval, boolean oneTimeActive) {
+        String response = null;
+        if(oneTimeActive){
+            response = binanceService.getKlineData(symbol, interval,1);
+        }else{
+            response = binanceService.getKlineData(symbol, interval);
+        }
+
         JSONArray jsonArray = new JSONArray(response);
+
+        List<KlineData> klineDataList = new ArrayList<>();
 
         for (Object obj : jsonArray) {
             JSONArray kline = (JSONArray) obj;
@@ -32,8 +42,14 @@ public class BinanceKlineDataService {
             data.setVolume(kline.getDouble(5));
             data.setCloseTime(kline.getLong(6));
 
-            binanceKlineDataRepository.save(data);
+            klineDataList.add((KlineData) obj);
         }
+
+        return klineDataList;
+    }
+
+    public void saveKlineData(List<KlineData> klineDataList){
+        binanceKlineDataRepository.saveAll(klineDataList);
     }
 
     public List<KlineData> getAllKlineData() {
