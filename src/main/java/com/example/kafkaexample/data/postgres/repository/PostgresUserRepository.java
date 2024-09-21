@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostgresUserRepository extends JpaRepository<PostgresUser, Long> {
+public interface PostgresUserRepository extends JpaRepository<PostgresUser, Long>, CustomPostgresUserRepository {
+    // JpaRepository metotları + CustomPostgresUserRepository metotları
 }
