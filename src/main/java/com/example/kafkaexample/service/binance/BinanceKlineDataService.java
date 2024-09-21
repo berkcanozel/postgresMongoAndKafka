@@ -42,7 +42,7 @@ public class BinanceKlineDataService {
             data.setVolume(kline.getDouble(5));
             data.setCloseTime(kline.getLong(6));
 
-            klineDataList.add((KlineData) obj);
+            klineDataList.add(data);
         }
 
         return klineDataList;
