@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BinanceKlineDataRepository extends MongoRepository<KlineData, String> {
+    KlineData findTopBySymbolAndIntervalOrderByCloseTimeDesc(String symbol, String interval);
 }
 
