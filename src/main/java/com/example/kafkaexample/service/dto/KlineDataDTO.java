@@ -1,5 +1,6 @@
 package com.example.kafkaexample.service.dto;
 
+import com.example.kafkaexample.data.mongo.entity.KlineData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,4 +23,14 @@ public class KlineDataDTO {
     private Double takerBuyBaseAssetVolume;
     private Double takerBuyQuoteAssetVolume;
     private Double ignore;
+
+    public static KlineDataDTO fromEntity(KlineData entity) {
+        KlineDataDTO dto = new KlineDataDTO();
+        dto.setOpenTime(entity.getOpenTime());
+        dto.setOpen(entity.getOpen());
+        dto.setHigh(entity.getHigh());
+        dto.setLow(entity.getLow());
+        dto.setClose(entity.getClose());
+        return dto;
+    }
 }
