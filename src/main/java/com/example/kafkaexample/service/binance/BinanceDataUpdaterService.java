@@ -5,6 +5,7 @@ import com.example.kafkaexample.data.mongo.repository.BinanceKlineDataRepository
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -31,9 +32,9 @@ public class BinanceDataUpdaterService {
             .baseUrl("https://api.binance.com")
             .build();
 
+    // Uygulama başlatıldığında eksik verileri tamamla
     public void updateMissingData() {
         try {
-            // Veritabanındaki en son kapanış zamanını al
             KlineData lastKline = klineDataRepository.findTopBySymbolAndIntervalOrderByCloseTimeDesc(SYMBOL, INTERVAL);
             long startTime = (lastKline != null) ? lastKline.getCloseTime() + 1 :
                     LocalDate.of(2018, 1, 1)
@@ -58,6 +59,26 @@ public class BinanceDataUpdaterService {
             System.out.println("Eksik veriler başarıyla tamamlandı.");
         } catch (Exception e) {
             System.err.println("Eksik veriler tamamlanırken hata oluştu: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Her dakika yeni veriyi çek
+    @Scheduled(fixedRate = 60000) // 60,000 ms = 1 dakika
+    public void fetchRealTimeData() {
+        try {
+            KlineData lastKline = klineDataRepository.findTopBySymbolAndIntervalOrderByCloseTimeDesc(SYMBOL, INTERVAL);
+            long startTime = (lastKline != null) ? lastKline.getCloseTime() + 1 : System.currentTimeMillis();
+            long endTime = System.currentTimeMillis();
+
+            List<KlineData> klineDataList = fetchKlineData(SYMBOL, INTERVAL, LIMIT, startTime, endTime);
+
+            if (!klineDataList.isEmpty()) {
+                klineDataRepository.saveAll(klineDataList);
+                System.out.println("Real-time data updated with " + klineDataList.size() + " klines.");
+            }
+        } catch (Exception e) {
+            System.err.println("Gerçek zamanlı veri çekerken hata oluştu: " + e.getMessage());
             e.printStackTrace();
         }
     }
