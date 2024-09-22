@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 @Service
 public class BinanceNewService {
@@ -33,8 +35,7 @@ public class BinanceNewService {
             .build();
 
     /**
-     * Tüm tarihsel veriyi çeker ve MongoDB'ye kaydeder.
-     * Başlangıç tarihi 2018-01-01 olarak belirlenmiştir.
+     * Tarihsel verileri çoklu iş parçacığı kullanarak çeker ve veritabanına kaydeder.
      */
     public void fetchAndStoreHistoricalData() {
         try {
@@ -46,23 +47,83 @@ public class BinanceNewService {
                             .toInstant(ZoneOffset.UTC)
                             .toEpochMilli();
             long endTime = System.currentTimeMillis();
-            boolean hasMore = true;
 
-            while (hasMore) {
-                List<KlineData> klineDataList = getKlineData(SYMBOL, INTERVAL, LIMIT, startTime, endTime);
-                if (klineDataList.isEmpty()) {
-                    hasMore = false;
-                } else {
-                    klineDataRepository.saveAll(klineDataList);
-                    System.out.println("Fetched " + klineDataList.size() + " klines starting at " + Instant.ofEpochMilli(startTime));
-                    // Son kline'in closeTime'ını bir sonraki startTime olarak ayarla
-                    startTime = klineDataList.get(klineDataList.size() - 1).getCloseTime() + 1;
-                }
+            // Zaman aralığını 1000 dakikalık bölümlere ayır
+            long intervalMillis = 1000L * 60 * 1000; // 1000 dakika = 60,000,000 milisaniye
+            List<Callable<Void>> tasks = new ArrayList<>();
+
+            while (startTime < endTime) {
+                long taskStartTime = startTime;
+                long taskEndTime = Math.min(startTime + intervalMillis, endTime);
+
+                tasks.add(() -> {
+                    fetchAndStoreKlines(taskStartTime, taskEndTime);
+                    return null;
+                });
+
+                startTime = taskEndTime;
             }
+
+            // İş Parçacığı Havuzu Oluştur
+            int threadCount = 32; // İşlemcinizin kapasitesine göre
+            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
+            // Görevleri Paralel Olarak Çalıştır
+            List<Future<Void>> futures = executor.invokeAll(tasks);
+
+            // Tüm görevlerin tamamlanmasını bekle
+            for (Future<Void> future : futures) {
+                future.get(); // Hata kontrolü için
+            }
+
+            // İş Parçacığı Havuzunu Kapat
+            executor.shutdown();
 
             System.out.println("Tüm tarihsel veriler başarıyla çekildi ve kaydedildi.");
         } catch (Exception e) {
             System.err.println("Tarihsel veri çekerken hata oluştu: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Belirtilen zaman aralığı için kline verilerini çeker ve kaydeder.
+     *
+     * @param startTime Başlangıç zamanı (milisaniye)
+     * @param endTime   Bitiş zamanı (milisaniye)
+     */
+    private void fetchAndStoreKlines(long startTime, long endTime) {
+        try {
+            boolean hasMore = true;
+
+            while (hasMore && startTime < endTime) {
+                List<KlineData> klineDataList = getKlineData(SYMBOL, INTERVAL, LIMIT, startTime, endTime);
+                if (klineDataList.isEmpty()) {
+                    hasMore = false;
+                } else {
+                    // Verileri veritabanına kaydet
+                    for(KlineData klineData:klineDataList) {
+                        if (klineDataRepository.findByOpenTime(klineData.getOpenTime()).isEmpty()) {
+                            klineDataRepository.save(klineData);
+                        }
+                    }
+
+                    System.out.println("Thread " + Thread.currentThread().getName() + " fetched " + klineDataList.size() + " klines starting at " + Instant.ofEpochMilli(startTime));
+
+                    // Son kline'ın closeTime'ını bir sonraki startTime olarak ayarla
+                    startTime = klineDataList.get(klineDataList.size() - 1).getCloseTime() + 1;
+
+                    // Eğer dönen veri sayısı limitten azsa, bu zaman aralığındaki tüm verileri çekmişiz demektir
+                    if (klineDataList.size() < LIMIT) {
+                        hasMore = false;
+                    }
+
+                    // Oran sınırlarını aşmamak için istekler arasında kısa bir gecikme ekle
+                    Thread.sleep(200); // 200 milisaniye bekle
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Thread " + Thread.currentThread().getName() + " kline verisi çekerken hata oluştu: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -116,12 +177,4 @@ public class BinanceNewService {
         return klineDataList;
     }
 
-    /**
-     * En son kaydedilen Kline verisini alır.
-     *
-     * @return En son Kline verisi
-     */
-    public KlineData getLastKline() {
-        return klineDataRepository.findTopBySymbolAndIntervalOrderByCloseTimeDesc(SYMBOL, INTERVAL);
-    }
 }
