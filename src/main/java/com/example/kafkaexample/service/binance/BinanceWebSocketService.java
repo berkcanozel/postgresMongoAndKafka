@@ -66,7 +66,7 @@ public class BinanceWebSocketService {
 
             KlineData kline = new KlineData();
             kline.setSymbol("BTCUSDT");
-            kline.setInterval("1m");
+            kline.setInterval("1s");
             kline.setOpenTime(k.get("t").asLong());
             kline.setOpen(k.get("o").asDouble());
             kline.setHigh(k.get("h").asDouble());
