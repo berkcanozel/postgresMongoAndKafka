@@ -25,7 +25,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://tradingviewuser:tradingviewpassword@mongo:27017/tradingview
+      uri: mongodb://root:password@mongo:27017/testdb
 
   management:
     endpoints:

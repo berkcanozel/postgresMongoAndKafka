@@ -1,32 +1,4 @@
 // mongo-init.js
-db = db.getSiblingDB('graylog');
-
-db.createUser({
-  user: "graylog",
-  pwd: "graylog_password",
-  roles: [
-    {
-      role: "readWrite",
-      db: "graylog"
-    }
-  ]
-});
-
-// tradingview veritabanına geçiş yap
-db = db.getSiblingDB('tradingview');
-
-// tradingview veritabanı için kullanıcı oluştur
-db.createUser({
-  user: "tradingviewuser",
-  pwd: "tradingviewpassword",
-  roles: [
-    {
-      role: "readWrite",
-      db: "tradingview"
-    }
-  ]
-});
-
 // kline_data koleksiyonunu oluştur ve doğrulama kuralları ekle
 db.createCollection("kline_data", {
   validator: {
@@ -40,7 +12,7 @@ db.createCollection("kline_data", {
         },
         interval: {
           bsonType: "string",
-          enum: ["1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "6h", "8h", "12h", "1d", "3d", "1w", "1M"],
+          enum: ["1s","1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "6h", "8h", "12h", "1d", "3d", "1w", "1M"],
           description: "Must be a string and one of the specified intervals"
         },
         openTime: {
@@ -93,4 +65,17 @@ db.kline_data.insertOne({
   close: 20025.0,
   volume: 10.5,
   closeTime: NumberLong(1695264060000)
+});
+
+db = db.getSiblingDB('graylog');
+
+db.createUser({
+  user: "graylog",
+  pwd: "graylog_password",
+  roles: [
+    {
+      role: "readWrite",
+      db: "graylog"
+    }
+  ]
 });
