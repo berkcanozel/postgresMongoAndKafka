@@ -65,7 +65,7 @@ public class BinanceNewService {
             }
 
             // İş Parçacığı Havuzu Oluştur
-            int threadCount = 32; // İşlemcinizin kapasitesine göre
+            int threadCount = 12; // İşlemcinizin kapasitesine göre
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
             // Görevleri Paralel Olarak Çalıştır
