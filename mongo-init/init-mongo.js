@@ -1,5 +1,7 @@
 // mongo-init.js
 // kline_data koleksiyonunu oluştur ve doğrulama kuralları ekle
+
+db = db.getSiblingDB('testdb');
 db.createCollection("kline_data", {
   validator: {
     $jsonSchema: {
