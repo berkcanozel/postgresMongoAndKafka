@@ -1,10 +1,12 @@
 package com.example.kafkaexample.service.binance;
 
 
+import com.example.kafkaexample.KafkaExampleApplication;
 import com.example.kafkaexample.data.mongo.entity.KlineData;
 import com.example.kafkaexample.data.mongo.repository.BinanceKlineDataRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
@@ -31,9 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DenemeWebSocket {
 
-    private static final Logger logger = LoggerFactory.getLogger(DenemeWebSocket.class);
+    private final Logger logger = LoggerFactory.getLogger(DenemeWebSocket.class);
 
     private static final String BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@aggTrade";
 
@@ -92,7 +95,7 @@ public class DenemeWebSocket {
             try {
                 if (klineDataRepository.findByOpenTime(aggregatedData.getOpenTime()).isEmpty()) {
                     klineDataRepository.save(aggregatedData);
-                    logger.error("Gerçek zamanlı Kline verisi kaydedildi: {}",aggregatedData.getOpenTime());
+                    logger.info("Gerçek zamanlı Kline verisi kaydedildi: {}",aggregatedData.getOpenTime());
                     System.out.println("Gerçek zamanlı Kline verisi kaydedildi: " + aggregatedData.getOpenTime());
                 }
             } catch (Exception e) {

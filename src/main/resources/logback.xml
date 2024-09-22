@@ -1,20 +1,32 @@
 <configuration>
 
+    <!-- Logback İç Durum Dinleyicisi: Yapılandırma hatalarını görmek için -->
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
+
+    <!-- GELF Appender -->
     <appender name="GRAYLOG" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>graylog:12201</destination> <!-- Graylog sunucusunun IP adresi -->
-        <encoder>
-            <pattern>
-                {"timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}", "level": "%level", "logger": "%logger", "message": "%msg"}
-            </pattern>
+        <destination>graylog:12201</destination> <!-- Graylog sunucusunun IP adresi ve portu -->
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp />
+                <logLevel />
+                <loggerName />
+                <message />
+                <threadName />
+                <mdc /> <!-- Doğru kullanım: küçük harf -->
+                <arguments />
+            </providers>
         </encoder>
     </appender>
 
+    <!-- Console Appender -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
+    <!-- Root Logger -->
     <root level="INFO">
         <appender-ref ref="GRAYLOG" />
         <appender-ref ref="STDOUT" />
