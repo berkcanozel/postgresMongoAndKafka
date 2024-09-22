@@ -1,11 +1,14 @@
 package com.example.kafkaexample.controller;
 
 import com.example.kafkaexample.data.mongo.entity.KlineData;
+import com.example.kafkaexample.service.binance.BinanceDataUpdaterService;
 import com.example.kafkaexample.service.binance.BinanceKlineDataService;
 import com.example.kafkaexample.service.binance.BinanceNewService;
 import com.example.kafkaexample.service.binance.BinanceWebSocketService;
 import com.example.kafkaexample.service.binance.DenemeWebSocket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +28,20 @@ public class KlineDataController {
 
     @Autowired
     private DenemeWebSocket denemeWebSocket;
+
+    @Autowired
+    private BinanceDataUpdaterService dataUpdaterService;
+
+    @PostMapping("/update-missing-data")
+    public ResponseEntity<String> updateMissingData() {
+        try {
+            dataUpdaterService.updateMissingData();
+            return ResponseEntity.ok("Eksik veriler başarıyla güncellendi.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Veri güncelleme işlemi sırasında hata oluştu.");
+        }
+    }
+
 
     @GetMapping("/startWebSocketForRealData")
     public void startWebSocketForRealData() {
