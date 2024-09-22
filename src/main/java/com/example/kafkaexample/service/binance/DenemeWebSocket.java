@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -30,6 +32,8 @@ import java.util.List;
 
 @Service
 public class DenemeWebSocket {
+
+    private static final Logger logger = LoggerFactory.getLogger(DenemeWebSocket.class);
 
     private static final String BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@aggTrade";
 
@@ -88,6 +92,7 @@ public class DenemeWebSocket {
             try {
                 if (klineDataRepository.findByOpenTime(aggregatedData.getOpenTime()).isEmpty()) {
                     klineDataRepository.save(aggregatedData);
+                    logger.error("Gerçek zamanlı Kline verisi kaydedildi: {}",aggregatedData.getOpenTime());
                     System.out.println("Gerçek zamanlı Kline verisi kaydedildi: " + aggregatedData.getOpenTime());
                 }
             } catch (Exception e) {
