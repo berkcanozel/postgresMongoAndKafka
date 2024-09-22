@@ -10,16 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KlineDataDTO {
-    private long openTime;
-    private double open;
-    private double high;
-    private double low;
-    private double close;
-    private double volume;
-    private long closeTime;
-    private double quoteAssetVolume;
-    private int numberOfTrades;
-    private double takerBuyBaseAssetVolume;
-    private double takerBuyQuoteAssetVolume;
-    private double ignore;
+    private Long openTime;
+    private Double open;
+    private Double high;
+    private Double low;
+    private Double close;
+    private Double volume;
+    private Long closeTime;
+    private Double quoteAssetVolume;
+    private Integer numberOfTrades;
+    private Double takerBuyBaseAssetVolume;
+    private Double takerBuyQuoteAssetVolume;
+    private Double ignore;
 }

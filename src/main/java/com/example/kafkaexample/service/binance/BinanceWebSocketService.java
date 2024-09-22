@@ -16,7 +16,7 @@ import java.time.Duration;
 @Service
 public class BinanceWebSocketService {
 
-    private static final String BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@kline_1m";
+    private static final String BINANCE_WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@aggTrade";
 
     @Autowired
     private BinanceKlineDataRepository klineDataRepository;
@@ -91,7 +91,7 @@ public class BinanceWebSocketService {
     private void saveKlineData(KlineData klineData) {
         try {
             // MongoDB'de aynı openTime'a sahip bir kayıt varsa, kaydetmeyi atlayın
-            if (klineDataRepository.findById(klineData.getId()).isEmpty()) {
+            if (klineDataRepository.findByOpenTime(klineData.getOpenTime()).isEmpty()) {
                 klineDataRepository.save(klineData);
                 System.out.println("Gerçek zamanlı Kline verisi kaydedildi: " + klineData.getOpenTime());
             }

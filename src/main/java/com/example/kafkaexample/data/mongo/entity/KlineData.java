@@ -25,19 +25,19 @@ public class KlineData {
     private String interval;
 
     @Indexed(unique = true)
-    private long openTime;
+    private Long openTime;
 
-    private double open;
+    private Double open;
 
-    private double high;
+    private Double high;
 
-    private double low;
+    private Double low;
 
-    private double close;
+    private Double close;
 
-    private double volume;
+    private Double volume;
 
-    private long closeTime;
+    private Long closeTime;
 
     // Getters and Setters
     // ...

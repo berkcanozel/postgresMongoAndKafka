@@ -3,6 +3,7 @@ import com.example.kafkaexample.data.mongo.entity.KlineData;
 import com.example.kafkaexample.data.mongo.repository.BinanceKlineDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,7 +16,8 @@ public class BinanceKlineDataService {
     private final BinanceService binanceService;
 
 
-    private final BinanceKlineDataRepository binanceKlineDataRepository;
+    @Autowired
+    private BinanceKlineDataRepository klineDataRepository;
 
     public List<KlineData> fetchAndSaveKlineData(String symbol, String interval, boolean oneTimeActive) {
         String response = null;
@@ -49,11 +51,11 @@ public class BinanceKlineDataService {
     }
 
     public void saveKlineData(List<KlineData> klineDataList){
-        binanceKlineDataRepository.saveAll(klineDataList);
+        klineDataRepository.saveAll(klineDataList);
     }
 
     public List<KlineData> getAllKlineData() {
-        return binanceKlineDataRepository.findAll();
+        return klineDataRepository.findAll();
     }
 }
 
